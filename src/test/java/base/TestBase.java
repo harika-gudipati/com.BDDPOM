@@ -1,0 +1,62 @@
+package base;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class TestBase {
+	public static WebDriver driver;
+	public static Properties prop;
+	public TestBase()
+	{
+		prop= new Properties();
+		String path=System.getProperty("user.dir")+"//src//test//resources//ConfigFiles//config.properties";
+		FileInputStream fin;
+		try {
+			fin = new FileInputStream(path);
+			try {
+				prop.load(fin);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	public static void initialize()
+	{
+		String browname=prop.getProperty("browser");
+		if(browname.equalsIgnoreCase("chrome"))
+		{
+			WebDriverManager.chromedriver().setup();
+			
+		}
+		if(browname.equalsIgnoreCase("edge"))
+		{
+			WebDriverManager.edgedriver().setup();
+			driver=new EdgeDriver();
+			
+		}
+		driver=new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+		driver.manage().deleteAllCookies();
+		driver.get(prop.getProperty("url"));
+		}
+
+	}
+
